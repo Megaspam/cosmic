@@ -1,0 +1,193 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>Cosmic Wimpout</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript">
+	<!--
+		function getRndInteger(min,max){
+			return Math.floor(Math.random() * (max + 1 - min)) + min;
+		}
+		function rollDice(){
+			var count;
+			for (count = 0; count < numDice; count++){
+				theDice[count] = getRndInteger(1,6);
+			}
+			//Debug values - overwrite random dice rolls
+			///*
+			theDice[0] = 6;
+			theDice[1] = 6;
+			theDice[2] = 6;
+			theDice[3] = 6;
+			//theDice[4] = 1;
+			//*/
+			setValues();
+		}
+		function drawDice(){
+			var count;
+			var images = "";
+			for (count = 0; count < theDice.length - 1; count ++){
+				images = images + "<img src=\"" + theDice[count] + ".png\" alt = \"" + theDice[count] + "\" title=\"" + theDice[count] + "\"> ";
+			}
+			images = images + "<img src=\"" + theDice[count] + "b.png\" alt = \"" + theDice[count] + "\" title=\"" + theDice[count] + "\"> ";
+			document.getElementById("dice").innerHTML = images;
+		}
+		
+		function setValues(){
+			for (count = 0; count < numDice; count++){
+				if (theDice[count] == 1){
+					theValue[count] = 10;
+				} else {
+					theValue[count] = theDice[count];
+				}
+			}
+			if (theDice[4] == 3){  //If black sun
+				theValue[4] = 9;   //set value of black die to 9
+			}
+		}
+		
+		function minValue(){
+			min_j = 0;
+			for (i = 0; i < theValue.length; i++){
+				for (j = 1; j < theValue.length; j++){
+					if (theValue[i] < theValue[min_j]){
+						min_j = j;
+					}
+				}
+			}
+			return min_j;
+		}
+		
+		function sortDice(){ //Sort the dice by value and store them in sortedDice
+			var i, j, min_j;
+			
+			sortedDice = theValue;
+			
+			for (i = 0; i < theValue.length; i++){
+				
+				min_j = i;  //assume theValue[i] is the minimum
+				
+				for (j = i + 1; j < theValue.length; j++){
+					if (theValue[j] < theValue[min_j]){
+						min_j = j;  //We found a smaller value, update min_j
+					}
+				}
+				
+				var help = theValue[i];
+				sortedDice[i] = theValue[j];
+				
+				
+				
+				
+				
+			}
+			
+			
+			
+			return 0;
+		}
+		
+		function isStarTrain(){ //Do all 5 dice show a 6? Instantly win the game, if so
+			var Stars = 0;
+			
+			for (i = 0; i < theDice.length; i++){
+				if (theDice[i] == 6)
+					Stars ++;
+			}
+			
+			//if (theDice[4] == 3)  //If the black die is a flaming sun, count it as a 6 for a star train
+			//	Stars ++;
+				
+			if (Stars >= 5){
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+		
+		function isSuperNova(){ //Do all 5 dice show a 10? Instantly out of the game, if so
+			var Nova = 0;
+			for (i=0; i < theDice.length; i++){
+				if (theDice[i] == 1)
+					Nova ++;
+			}
+			
+			if (Nova >=5){
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+		
+		function isFreightTrain(){ //Check to see if all dice are the same face
+			// if (theDice[0] == theDice[1] && theDice[1] == theDice[2] && theDice[2] == theDice[3] && ((theDice[3] == theDice[4]) || theDice[4] == 3)){ // This variation counts the flaming sun as part of a freight train
+			if (theDice[0] == theDice[1] && theDice[1] == theDice[2] && theDice[2] == theDice[3] && theDice[3] == theDice[4] && theDice[4] != 3){
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+		
+		function isFlash(){  //Check to see if 3 of the dice faces are the same (or 2 of the same dice and a flaming sun)
+			if (isFreightTrain()){ //If there is a freight train, don't check for a flash
+				return 0;
+			} else {
+				if (theDice[0])
+					return 0;
+			}
+		}
+
+		function currentScore(){
+			var score = 0;
+			if (isFreightTrain()){
+				score = theValue[0] * 100;
+			}
+			
+			document.getElementById("displayScore").innerHTML = "Displayed score: " + score;
+		}
+		
+		function debugDisplay(){
+			debugText = "";
+			
+			debugText = "Dice: ";
+			for (a = 0; a < theDice.length; a++){ //add dice faces to debug output
+				debugText = debugText + theDice[a] + ", ";
+			}
+			
+			debugText = debugText + "<br>Values: "
+			for (b = 0; b < theValue.length; b++){ //add dice values to debug output
+				debugText = debugText + theValue[b] + ", ";
+			}
+			
+			debugText += "<br>Minimum value position: " + minValue();
+			debugText += "<br>isSuperNova: " + isSuperNova();	
+			debugText += "<br>isStarTrain: " + isStarTrain();
+			
+			document.getElementById("debug").innerHTML = debugText;
+		}
+		
+		function main(){
+			rollDice();
+			drawDice();
+			debugDisplay();
+			currentScore();
+		}
+		
+		var theDice = [1,2,3,4,5];
+		var theValue = [0,0,0,0,0];
+		var sortedDice = [0,0,0,0,0];
+		var sortedPos = [0,0,0,0,0];
+		var numDice = 5;
+	// -->
+	</script>	
+</head>
+<body>
+<h1>Cosmic Wimpout</h1>
+<div id="dice"><img src="0.png" alt="Die 1" /> <img src="0.png" alt="Die 2" /> <img src="0.png" alt="Die 3" /> <img src="0.png" alt="Die 4" /> <img src="0.png" alt="Die 5" /></div>
+<div id="debug">DEBUG</div>
+<div id="displayScore">Displayed score:</div>
+<div id="button"><button onclick = "main();">Roll again</button></div>
+<script type="text/javascript">main();</script>
+</body>
+</html>
